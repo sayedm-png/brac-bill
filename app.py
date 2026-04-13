@@ -1,3 +1,31 @@
+# --- The template part of your code ---
+template_name = "Template.xlsm"
+
+try:
+    # keep_vba=True is critical for .xlsm files
+    wb = load_workbook(template_name, keep_vba=True)
+    ws = wb.active 
+
+    # Your updated cell mappings (double-check these in your Excel)
+    ws['B5'] = str(visit_date) 
+    ws['B6'] = area            
+    # ... (rest of your cell updates)
+
+    # Save to memory without losing macros
+    output = BytesIO()
+    wb.save(output)
+    processed_data = output.getvalue()
+
+    st.success("Official Bill Formatted Successfully!")
+    
+    st.download_button(
+        label="📥 Download Final Bill",
+        data=processed_data,
+        file_name=f"Field_Bill_{area}.xlsm",
+        mime="application/vnd.ms-excel.sheet.macroenabled.12" # Correct type for .xlsm
+    )
+except Exception as e:
+    st.error(f"Error: {e}. Check if Template.xlsm is uploaded to GitHub.")
 import streamlit as st
 import pandas as pd
 from openpyxl import load_workbook
